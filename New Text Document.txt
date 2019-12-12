@@ -1,0 +1,89 @@
+#This function finds k similar users given the user_id and ratings 
+from sklearn.neighbors import NearestNeighbors
+M = ratingFilteredPivot
+#Note that the similarities are same as obtained via using 
+def findksimilarusers(user_id, ratings, metric, k = 5):
+    similarities=[]
+    indices=[]
+    model_knn = NearestNeighbors(metric = metric, algorithm = 'brute') 
+    model_knn.fit(ratings)
+
+    distances, indices = model_knn.kneighbors(ratings.iloc[user_id, :].values.values.reshape(1, -1), n_neighbors = k)
+    similarities = 1-distances.flatten()
+    print ( '{0} most similar users for User {1}:\n'.format(k-1,user_id) )
+    for i in range(0, len(indices.flatten())):
+        if indices.flatten()[i]+1 == user_id:
+            continue;
+
+        else:
+            print ('{0}: User {1}, with similarity of {2}'.
+            format(i, indices.flatten()[i]+1, similarities.flatten()[i]))
+            
+    return similarities,indices
+
+def predict_userbased(user_id, item_id, ratings, metric, k = 5):
+    prediction=0
+    similarities, indices=findksimilarusers(user_id, ratings,metric, k)
+     #similar users based on cosine similarity
+    mean_rating = ratings.loc[user_id-1,:].mean() 
+     #to adjust for zero based indexing
+    sum_wt = np.sum(similarities)-1
+    product=1
+    wtd_sum = 0 
+    
+    for i in range(0, len(indices.flatten())):
+        if indices.flatten()[i]+1 == user_id:
+            continue;
+        else: 
+            ratings_diff = ratings.iloc[indices.flatten()[i],item_id-1] - np.mean(ratings.iloc[indices.flatten()[i],:])
+            product = ratings_diff * (similarities[i])
+            wtd_sum = wtd_sum + product
+    
+    prediction = int(round(mean_rating + (wtd_sum/sum_wt)))
+    print ('\nPredicted rating for user {0} -> item {1}: {2}'.
+    format(user_id,item_id,prediction))
+
+    return prediction
+	
+	
+	
+	
+	
+def recommendItem(user_id, item_id, ratings):
+    
+#     if user_id<1 or user_id>6 or type(user_id) is not int:
+#         print ('Userid does not exist. Enter numbers from 1-6')
+#     else:    
+    ids = ['User-based CF (cosine)','User-based CF (correlation)',
+'Item-based CF (cosine)', 'Item-based CF (adjusted cosine)']
+
+    approach = widgets.Dropdown(options=ids, value=ids[0],
+           description='Select Approach', width='500px')
+
+    def on_change(change):
+        prediction = 0
+        display.clear_output(wait=True)
+        if change['type'] == 'change' and change['name'] == 'value':            
+            if (approach.value == 'User-based CF (cosine)'):
+                metric = 'cosine'
+                prediction = predict_userbased(user_id, item_id, ratings, metric)
+            elif (approach.value == 'User-based CF (correlation)') :                       
+                metric = 'correlation'               
+                prediction = predict_userbased(user_id,item_id, ratings, metric)
+            elif (approach.value == 'Item-based CF (cosine)'):
+                prediction = predict_itembased(user_id, item_id, 
+ratings)
+            else:
+                prediction = predict_itembased_adjcos(user_id,
+item_id,ratings)
+
+            if ratings[item_id-1][user_id-1] != 0: 
+                print ('Item already rated')
+            else:
+                if prediction>=6:
+                    print ('\nItem recommended')
+                else:
+                    print ('Item not recommended')
+
+    approach.observe(on_change)
+    display.display(approach)
