@@ -16,7 +16,7 @@ import time
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-def read_csv():
+def readCSV():
 	products = pd.read_csv('./products_join_categories.csv')
 	categories = pd.read_csv( './categories.csv')
 	product_lists = pd.read_csv( './product_lists_with_cut.csv').fillna('')
@@ -34,7 +34,7 @@ def processText(text, join_str = " ", array = False):
     return text
 
 def recommendations(text,num = 20):
-    res = [None] * num
+    res = []
     ss = [processText(text, ",")]
     ss_vec = tfidf.transform(ss)
     cos_sim = cosine_similarity(ss_vec, tfidf_vec)
@@ -46,13 +46,16 @@ def recommendations(text,num = 20):
         row = product_lists[product_lists.index==idx]
         productId = row.productId.values[0]
         name = row.name.values[0]
-        res[i] = name
-        i+=1
+		
+        res.append({
+            'productId' : str(productId),
+            'product_name' : name
+		})
     return res
 
 start_time = time.time()
 print("Starting....")
-products, categories, product_lists, top_20_words = read_csv()
+products, categories, product_lists, top_20_words = readCSV()
 tfidf  = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0).fit(product_lists['cut_name'])
 tfidf_vec = tfidf.transform(product_lists['cut_name'])
 print("--- %s seconds ---" % (time.time() - start_time))
@@ -60,7 +63,9 @@ print("--- %s seconds ---" % (time.time() - start_time))
 @app.route('/', methods=['GET'])
 def home():
 	global top_20_words
-	return(dumps({'data':top_20_words}))
+	words = top_20_words.to_dict('index')
+	res = [(v) for k, v in words.items()]
+	return(jsonify(data=res))
     #return render_template("aaa.html")
 
 @app.route('/search', methods=['GET'])
