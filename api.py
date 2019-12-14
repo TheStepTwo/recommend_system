@@ -5,15 +5,13 @@
 # recommend_user_cf
 
 import flask
-from flask import render_template
-from flask import jsonify
-from flask import request
+from flask import render_template, jsonify, request, make_response
+from flask_cors import CORS
 import pandas as pd
 import numpy as np
 import re
 import jieba as jb
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import NearestNeighbors
 from scipy.sparse import csr_matrix
@@ -22,6 +20,7 @@ import time
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+CORS(app, supports_credentials=True)
 
 def readCSV():
     products = pd.read_csv('./products_join_categories.csv')
@@ -147,6 +146,13 @@ ratingFilteredPivot = rating.pivot( index='productId' , columns='userId' , value
 ratingFilteredPivotByUser = rating.pivot( index='userId' , columns='productId' , values="rating" ).fillna(0)
 print("--- %s seconds ---" % (time.time() - start_time))
 
+def makeResponse(result_text):
+    response = make_response(jsonify(data=result_text))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
+    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
+    return response
+
 # tf-idf
 @app.route('/top_n', methods=['GET'])
 def top_n_word():
@@ -157,14 +163,14 @@ def top_n_word():
     exec("global %s" % str_n)
     words = globals()[str_n].to_dict('index')
     res = [(v) for k, v in words.items()]
-    return(jsonify(data=res))
+    return(makeResponse(res))
     #return render_template("aaa.html")
     
 @app.route('/search', methods=['GET'])
 def search():
     query_str = request.args.get('query_str')
     res = recommendations(query_str)
-    return(jsonify(data=res))
+    return(makeResponse(res))
 
 # knn
 @app.route('/recommend_item_cf', methods=['GET'])
@@ -178,7 +184,7 @@ def recommendByItemCf():
     topK = []
     for i in range(0, len(distances.flatten())):
         topK.append(products.iloc[ratingFilteredPivot.index[indices.flatten()[i]]].product_name)
-    return jsonify(data=topK)
+    return makeResponse(topK)
     
 @app.route('/recommend_user_cf', methods=['GET'])
 def recommendByUserCf():
@@ -189,6 +195,6 @@ def recommendByUserCf():
     #7488
     distances, indices = findTopKByUserCf(ratingFilteredPivotByUser,userId)
     topK = findByKItemByTopKUsers(ratingFilteredPivotByUser,userId,distances,indices,k)
-    return jsonify(data=topK)
+    return makeResponse(topK)
 
 app.run(host='0.0.0.0', port=80)
