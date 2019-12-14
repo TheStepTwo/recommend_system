@@ -1,24 +1,27 @@
 import flask
 from flask import render_template
+from flask import jsonify
+from flask import request
 import pandas as pd
+import numpy as np
 import re
 import jieba as jb
-from sklearn.feature_extraction.text import CountVectorizer
 import json
+from json_tricks import dump, dumps, load, loads, strip_comments
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import time
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-@app.route('/', methods=['GET'])
-def home():
-	global common_words
-	return(json.dumps(common_words))
-    #return render_template("aaa.html")
-
 def read_csv():
 	products = pd.read_csv('./products_join_categories.csv')
 	categories = pd.read_csv( './categories.csv')
-	return products, categories
+	product_lists = pd.read_csv( './product_lists_with_cut.csv').fillna('')
+	top_20_words = pd.read_csv( './top_20_word.csv', names = ['cut_name' , 'count'])
+	return products, categories, product_lists, top_20_words
 
 def processText(text, join_str = " ", array = False):
     text = str(text)
@@ -30,21 +33,42 @@ def processText(text, join_str = " ", array = False):
     text = join_str.join([w for w in list(jb.cut(text)) if w !=' '])
     return text
 
-def get_top_n_words(corpus, n=None, ngram = 1):
-    vec = CountVectorizer(ngram_range=(ngram, ngram)).fit(corpus)
-    bag_of_words = vec.transform(corpus)
-    sum_words = bag_of_words.sum(axis=0) 
-    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
-    words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
-    return words_freq, words_freq[:n]
+def recommendations(text,num = 20):
+    res = [None] * num
+    ss = [processText(text, ",")]
+    ss_vec = tfidf.transform(ss)
+    cos_sim = cosine_similarity(ss_vec, tfidf_vec)
+    arr =cos_sim[0]
+    
+    idxs=list(np.argsort(-arr)[:num])
+    i = 0
+    for idx in idxs:
+        row = product_lists[product_lists.index==idx]
+        productId = row.productId.values[0]
+        name = row.name.values[0]
+        res[i] = name
+        i+=1
+    return res
 
+start_time = time.time()
 print("Starting....")
-products, categories = read_csv()
-product_lists = products[['productId','name']]
-product_lists['cut_name'] = product_lists['name'].apply(processText)
-words_freq, common_words = get_top_n_words(product_lists['cut_name'], 20)
-df1 = pd.DataFrame(common_words, columns = ['cut_name' , 'count'])
-#df1.groupby('cut_name').sum()['count'].sort_values()
+products, categories, product_lists, top_20_words = read_csv()
+tfidf  = TfidfVectorizer(analyzer='word', ngram_range=(1, 1), min_df=0).fit(product_lists['cut_name'])
+tfidf_vec = tfidf.transform(product_lists['cut_name'])
+print("--- %s seconds ---" % (time.time() - start_time))
+
+@app.route('/', methods=['GET'])
+def home():
+	global top_20_words
+	return(dumps({'data':top_20_words}))
+    #return render_template("aaa.html")
+
+@app.route('/search', methods=['GET'])
+def search():
+	query_str = request.args.get('query_str')
+	res = recommendations(query_str)
+	return(jsonify(data=res))
+	
 app.run()
 
 
