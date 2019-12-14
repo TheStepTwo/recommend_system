@@ -28,7 +28,7 @@ def readCSV():
     products.set_index( ['productId'] , inplace=True, drop=True )
     products = products.rename({'name': 'product_name'}, axis='columns')
     categories = pd.read_csv( './categories.csv')
-    rating = pd.read_csv('D:/Step/ratings_drop.csv' , usecols=[ 'userId' , 'productId' , 'rating'])
+    rating = pd.read_csv('./ratings_drop.csv' , usecols=[ 'userId' , 'productId' , 'rating'])
     return products, categories , rating
 
 def readCSVWord():
@@ -178,7 +178,7 @@ def recommendByItemCf():
     global ratingFilteredPivot
     global products
     itemId = int(request.args.get('itemid'))
-    k = int(request.args.get('k') or 10)
+    k = int(request.args.get('k') or '10')
     #489000
     distances, indices = findTopKByItemCf(ratingFilteredPivot,itemId,k)
     topK = []
@@ -191,10 +191,10 @@ def recommendByUserCf():
     global ratingFilteredPivotByUser
     global products
     userId = int(request.args.get('userid'))
-    k = int(request.args.get('k') or 10)
+    k = int(request.args.get('k') or '10')
     #7488
     distances, indices = findTopKByUserCf(ratingFilteredPivotByUser,userId)
     topK = findByKItemByTopKUsers(ratingFilteredPivotByUser,userId,distances,indices,k)
     return makeResponse(topK)
 
-app.run(host='0.0.0.0', port=80)
+app.run(host='0.0.0.0', port=5000)
