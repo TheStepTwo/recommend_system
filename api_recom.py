@@ -83,24 +83,26 @@ def filterRatingArray():
 
 def findByKItemByTopKUsers(ratingFilteredPivotByUser,userId,distances,indices,k):
 	global products
-	prediction = 0
-	similarities = 1 - distances.flatten()
+	prediction=0
+	similarities = 1-distances.flatten()
 	sum_wt = np.sum(similarities)
 	wtd_sum = 0 
+
 	notRatedItems = np.setdiff1d(ratingFilteredPivotByUser.columns.to_numpy() , ratingFilteredPivotByUser[ (ratingFilteredPivotByUser.index == userId) ].iloc[0].nonzero()[0] )
-	predictionOfNotRateItems = []	
-	for item in notRatedItems.tolist():
-		weightedRatingSum = 0
-		for i in range(0, len(indices.flatten())):
-			ratingUserToItem = ratingFilteredPivotByUser.loc[ratingFilteredPivotByUser.iloc[indices.flatten()[i]].name,item] * similarities[i]
-			weightedRatingSum += ratingUserToItem
-		predictionOfNotRateItems.append(int(round( weightedRatingSum/sum_wt)))
-	predictionOfNotRateItems = np.array(predictionOfNotRateItems)
-	sortedIndex = predictionOfNotRateItems.argsort()[::-1][:k]
+	simArray = np.array([similarities]).T * ratingFilteredPivotByUser.ix[indices.flatten()].filter(notRatedItems.tolist()).to_numpy()
+	sortedIndex = (simArray.sum(axis=0)/sum_wt).argsort()[::-1][:10]
 	result = []
 	for index , productId in enumerate(sortedIndex.tolist()):
+		
 		result.append({
-			'productId' : products.iloc[productId].product_name
+			'productId' : str(notRatedItems[productId]),
+			'product_name' : products.iloc[notRatedItems[productId]].product_name,
+			'cat1' : str(products.iloc[notRatedItems[productId]].cat1),
+			'cat2' : str(products.iloc[notRatedItems[productId]].cat2),
+			'cat3' : str(products.iloc[notRatedItems[productId]].cat3),
+			'cat1_name' : products.iloc[notRatedItems[productId]].cat1_name,
+			'cat2_name' : products.iloc[notRatedItems[productId]].cat2_name,
+			'cat3_name' : products.iloc[notRatedItems[productId]].cat2_name,
 		})
 	return result
 		
