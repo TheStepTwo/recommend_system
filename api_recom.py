@@ -13,6 +13,7 @@ import json
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+
 @app.route('/', methods=['GET'])
 def home():import flask
 from flask import jsonify
@@ -32,9 +33,7 @@ app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
 def home():
-	global common_words
-	return(json.dumps(common_words))
-    #return render_template("aaa.html")
+	return '1'
 
 @app.route('/recommend_item_cf', methods=['GET'])
 def recommendByItemCf():
