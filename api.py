@@ -1,5 +1,5 @@
 # ---API list---
-# top_n_word
+# top_n
 # search
 # recommend_item_cf
 # recommend_user_cf
@@ -54,17 +54,22 @@ def recommendations(text,num = 20):
     ss_vec = tfidf.transform(ss)
     cos_sim = cosine_similarity(ss_vec, tfidf_vec)
     arr =cos_sim[0]
-    
     idxs=list(np.argsort(-arr)[:num])
-    i = 0
     for idx in idxs:
         row = product_lists[product_lists.index==idx]
         productId = row.productId.values[0]
-        name = row.name.values[0]
+        name = row.cut_name.values[0]
         
         res.append({
             'productId' : str(productId),
-            'product_name' : name
+            'product_name' : name,
+            'cat1' : str(products.iloc[idx].cat1),
+            'cat2' : str(products.iloc[idx].cat2),
+            'cat3' : str(products.iloc[idx].cat3),
+            'cat1_name' : products.iloc[idx].cat1_name,
+            'cat2_name' : products.iloc[idx].cat2_name,
+            'cat3_name' : products.iloc[idx].cat2_name,
+            'cos' : str(arr[idx])
         })
     return res
 
