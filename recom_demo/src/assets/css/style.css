@@ -1,0 +1,22 @@
+.hot-tag-div{
+    color: black;
+    margin-top: -20px;
+    font-size: 15px;
+    margin-right: 15px;
+}
+
+.top-tag-title{
+    color: rebeccapurple;
+}
+
+.top-tag-item{
+    margin-right: 10px;
+}
+
+.product-title{
+    color: black;
+}
+
+.v-messages.theme--light{
+    display: none;
+}
