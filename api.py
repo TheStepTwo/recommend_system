@@ -58,7 +58,7 @@ def recommendations(text,num = 20):
     for idx in idxs:
         row = product_lists[product_lists.index==idx]
         productId = row.productId.values[0]
-        name = row.name.values[0]
+        name = row.cut_name.values[0]
         
         res.append({
             'productId' : str(productId),
