@@ -110,7 +110,7 @@ Vue.use(VueAxios, axios_instance, axios);
 //114416->相機
 //119,7488->ram 17750
 //127579 -> 三國
-Vue.prototype.$userId = 114416;
+Vue.prototype.$userId = 17750;
 
 new Vue({
     vuetify,
