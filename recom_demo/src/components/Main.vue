@@ -12,24 +12,7 @@
         <v-toolbar-title>CISC7201 INTRODUCTION TO DATA SCIENCE PROGRAMMING</v-toolbar-title>
 
         <v-spacer></v-spacer>
-
-        <v-scale-transition>
-          <v-btn
-                  key="export"
-                  icon
-          >
-            <v-icon>mdi-export-variant</v-icon>
-          </v-btn>
-        </v-scale-transition>
-        <v-scale-transition>
-          <v-btn
-                  key="delete"
-                  icon
-          >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-scale-transition>
-
+        
         <v-btn icon>
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
