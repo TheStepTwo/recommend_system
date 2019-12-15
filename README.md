@@ -1,4 +1,4 @@
-# recommend_system
+# UMAC CISC7201 group project: recommend_system
 
 ## Project setup
 ```
