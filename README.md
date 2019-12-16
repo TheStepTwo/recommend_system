@@ -30,7 +30,7 @@ user-based-recom.ipnby : use nearest neighbors to recomment(user based)
 item-based-tfidf.ipynb: use tf-idf to recomment(item based)
 
 ### Customize configuration
-
+```
 
 
 Dataset: 
