@@ -1,5 +1,10 @@
 # UMAC CISC7201 group project: recommend_system
 
+## Requirment
+```
+nodeJs10 & python3.6 & jupyter notebook
+```
+
 ## Project setup
 ```
 pip install jieba
@@ -21,6 +26,8 @@ python api.py
 cd recom_demo
 npm install
 npm run dev
+
+open the url: http://locolhost:8080
 ```
 
 ### Jupyter notebook
@@ -30,11 +37,9 @@ user-based-recom.ipnby : use nearest neighbors to recomment(user based)
 item-based-tfidf.ipynb: use tf-idf to recomment(item based)
 
 ### Customize configuration
-
-
-
-### Dataset 
 ```
+
+
+Dataset: 
 https://drive.google.com/drive/folders/1CqDL0mZ1ZXSXyFDGrEYFj-6Nw3ttK0fY?fbclid=IwAR2NOgm143gX7B71oOXn73VkbwHgULE1KhVdzkJa4OSK_9ndiOQCiFTLEFc
-```
 
