@@ -25,7 +25,7 @@ python api.py
 ```
 cd recom_demo
 npm install
-npm run dev
+npm run serve
 
 open the url: http://locolhost:8080
 ```
