@@ -1,5 +1,5 @@
-# UMAC CISC7201 group project: recommend_system
-
+# UMAC CISC7201 group project: recommend_system 
+https://github.com/RyanLHU/CISC7201
 ## Requirment
 ```
 nodeJs10 & python3.6 & jupyter notebook
