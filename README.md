@@ -26,6 +26,8 @@ python api.py
 cd recom_demo
 npm install
 npm run dev
+
+open the url: http://locolhost:8080
 ```
 
 ### Jupyter notebook
