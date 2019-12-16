@@ -35,8 +35,6 @@ open the url: http://locolhost:8080
 item-based-recom.ipynb : use nearest neighbors to recomment(item based)
 user-based-recom.ipynb : use nearest neighbors to recomment(user based)
 item-based-tfidf.ipynb : The main analyze of the project and at the end use tf-idf to recomment(item content based)
-
-### Customize configuration
 ```
 
 
