@@ -32,9 +32,9 @@ open the url: http://locolhost:8080
 
 ### Jupyter notebook
 ```
-item-based-recom.ipynb : use nearest neighbors to recomment(item based)
-user-based-recom.ipynb : use nearest neighbors to recomment(user based)
-item-based-tfidf.ipynb : The main analyze of the project and at the end use tf-idf to recomment(item content based)
+item-based-recom.ipynb : use nearest neighbors to recommend(item based)
+user-based-recom.ipynb : use nearest neighbors to recommend(user based)
+item-based-tfidf.ipynb : The main analyze of the project and at the end use tf-idf to recommend(item content based)
 ```
 
 
