@@ -1,5 +1,10 @@
 # UMAC CISC7201 group project: recommend_system
 
+## Requirment
+```
+nodeJs10 & python3.6 & jupyter notebook
+```
+
 ## Project setup
 ```
 pip install jieba
