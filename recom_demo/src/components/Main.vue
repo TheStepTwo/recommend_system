@@ -12,7 +12,7 @@
         <v-toolbar-title>CISC7201 INTRODUCTION TO DATA SCIENCE PROGRAMMING</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        
+
         <v-btn icon>
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
