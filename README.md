@@ -5,6 +5,12 @@ https://github.com/RyanLHU/CISC7201
 nodeJs10 & python3.6 & jupyter notebook
 ```
 
+## Overview
+
+![capture](../master/capture_1.PNG)
+
+![capture](../master/Capture_2.PNG)
+
 ## Project setup
 ```
 pip install jieba
